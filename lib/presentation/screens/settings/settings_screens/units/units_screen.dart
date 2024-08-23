@@ -100,7 +100,6 @@ class UnitsTileState extends ConsumerState<UnitsTile> {
       children: [
         Container(
           margin: const EdgeInsets.symmetric(vertical: 8),
-          padding: const EdgeInsets.symmetric(vertical: 15),
           decoration: const BoxDecoration(
             gradient: LinearGradient(
                 begin: Alignment.centerLeft,
@@ -111,7 +110,7 @@ class UnitsTileState extends ConsumerState<UnitsTile> {
           //color: Color(0xFF0D113F),
           child: ListTile(
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 17, horizontal: 24),
+                const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
             leading: widget.icon != null
                 ? Icon(
                     widget.icon,
