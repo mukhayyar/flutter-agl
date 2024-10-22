@@ -266,14 +266,17 @@ class MpdClient {
       artState[position] = ArtStateEntry(reading: true, read: false);
     }
     debugPrint("Reading art for \"$file\"");
-    // Work around dart_mpd not escaping spaced strings itself
-    String escapedFile = file.replaceAll(RegExp(r" "), "\\ ");
-    escapedFile = "\"$file\"";
 
     bool first = true;
     do {
       //debugPrint("Reading, offset = $offset, size = $size");
-      var chunk = await client.readpicture(escapedFile, offset);
+      api.MpdImage? chunk = null;
+      try {
+        chunk = await client.readpicture(file, offset);
+      } catch (e) {
+        debugPrint(e.toString());
+        chunk = null;
+      }
       if (chunk != null) {
         if (chunk.size != null) {
           if (chunk.size == 0) {
