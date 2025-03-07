@@ -165,17 +165,17 @@ class VehicleNotifier extends Notifier<Vehicle> {
     try {
       switch (side) {
         case Side.left:
-          valClient.setInt32(
+          valClient.setFloat(
             VSSPath.vehicleDriverTemperature,
-            value,
+            value.toDouble(),
             true,
           );
           state = state.copyWith(driverTemperature: value);
           break;
         case Side.right:
-          valClient.setInt32(
+          valClient.setFloat(
             VSSPath.vehiclePassengerTemperature,
-            value,
+            value.toDouble(),
             true,
           );
           state = state.copyWith(passengerTemperature: value);
