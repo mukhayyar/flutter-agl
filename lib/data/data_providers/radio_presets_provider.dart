@@ -1,4 +1,5 @@
 import 'package:flutter_ics_homescreen/export.dart';
+import 'package:toml/toml.dart';
 
 class RadioPreset {
   final int frequency;
@@ -22,20 +23,18 @@ final radioPresetsProvider = Provider((ref) {
     print("Reading radio presets $presetsFilename");
     var presetsFile = File(presetsFilename);
     String content = presetsFile.readAsStringSync();
-    final dynamic yamlMap = loadYaml(content);
+    final configMap = TomlDocument.parse(content).toMap();
 
     List<RadioPreset> presets = [];
-    if (yamlMap.containsKey('fm')) {
-      dynamic list = yamlMap['fm'];
-      if (list is YamlList) {
-        for (var element in list) {
-          if ((element is YamlMap) &&
-              element.containsKey('frequency') &&
-              element.containsKey('name')) {
-            presets.add(RadioPreset(
-                frequency: element['frequency'].toInt(),
-                name: element['name'].toString()));
-          }
+    if (configMap.containsKey('fm') && configMap['fm'] is List) {
+      List presetList = configMap['fm'];
+      for (var element in presetList) {
+        if ((element is Map) &&
+            element.containsKey('frequency') &&
+            element.containsKey('name')) {
+          presets.add(RadioPreset(
+              frequency: element['frequency'].toInt(),
+              name: element['name'].toString()));
         }
       }
     }

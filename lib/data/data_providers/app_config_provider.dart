@@ -2,16 +2,22 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_ics_homescreen/core/constants/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:yaml/yaml.dart';
+import 'package:toml/toml.dart';
 
 class KuksaConfig {
   final String hostname;
   final int port;
+  final String authorizationFile;
   final String authorization;
   final bool useTls;
+  final String caCertificateFile;
+  final String readCaCertificateFile;
   final List<int> caCertificate;
   final String tlsServerName;
 
+  static String globalConfigFilePath = '/etc/xdg/AGL/kuksa.toml';
+  static String appConfigFilePath =
+      '/etc/xdg/AGL/flutter-ics-homescreen/kuksa.toml';
   static String defaultHostname = 'localhost';
   static int defaultPort = 55555;
   static String defaultCaCertPath = '/etc/kuksa-val/CA.pem';
@@ -19,8 +25,11 @@ class KuksaConfig {
   KuksaConfig(
       {required this.hostname,
       required this.port,
+      required this.authorizationFile,
       required this.authorization,
       required this.useTls,
+      required this.caCertificateFile,
+      required this.readCaCertificateFile,
       required this.caCertificate,
       required this.tlsServerName});
 
@@ -28,10 +37,97 @@ class KuksaConfig {
     return KuksaConfig(
         hostname: KuksaConfig.defaultHostname,
         port: KuksaConfig.defaultPort,
+        authorizationFile: "",
         authorization: "",
         useTls: false,
+        caCertificateFile: KuksaConfig.defaultCaCertPath,
+        readCaCertificateFile: "",
         caCertificate: [],
         tlsServerName: "");
+  }
+}
+
+KuksaConfig readKuksaConfig(String configFilePath, KuksaConfig defaultConfig) {
+  try {
+    print("Reading KUKSA configuration ${configFilePath}");
+    final configFile = File(configFilePath);
+    String content = configFile.readAsStringSync();
+    final configMap = TomlDocument.parse(content).toMap();
+
+    String hostname = defaultConfig.hostname;
+    if (configMap.containsKey('hostname')) {
+      hostname = configMap['hostname'];
+    }
+
+    int port = defaultConfig.port;
+    if (configMap.containsKey('port')) {
+      port = configMap['port'];
+    }
+
+    String tokenFile = defaultConfig.authorizationFile;
+    String token = defaultConfig.authorization;
+    if (configMap.containsKey('authorization')) {
+      String s = configMap['authorization'];
+      if (s.isNotEmpty) {
+        if (s.startsWith("/")) {
+          tokenFile = s;
+          debugPrint("Reading authorization token $tokenFile");
+          try {
+            token = File(tokenFile).readAsStringSync();
+          } on Exception catch (_) {
+            print("ERROR: Could not read authorization token file $tokenFile");
+            token = "";
+          }
+        } else {
+          token = s;
+        }
+      }
+    }
+    //debugPrint("authorization file = $tokenFile");
+    //debugPrint("authorization = $token");
+
+    bool useTls = defaultConfig.useTls;
+    if (configMap.containsKey('use-tls')) {
+      var value = configMap['use-tls'];
+      if (value is bool) useTls = value;
+    }
+    //debugPrint("Use TLS = $useTls");
+
+    String caCertFile = defaultConfig.caCertificateFile;
+    String readCaCertFile = defaultConfig.readCaCertificateFile;
+    List<int> caCert = defaultConfig.caCertificate;
+    if (configMap.containsKey('ca-certificate')) {
+      caCertFile = configMap['ca-certificate'];
+    }
+    if (caCertFile.isNotEmpty && caCertFile != readCaCertFile) {
+      try {
+        caCert = File(caCertFile).readAsBytesSync();
+      } on Exception catch (_) {
+        print("ERROR: Could not read CA certificate file $caCertFile");
+        caCert = [];
+      }
+      readCaCertFile = caCertFile;
+    }
+    //debugPrint("CA cert file = $caCertFile");
+    //debugPrint("CA cert = $caCert");
+
+    String tlsServerName = defaultConfig.tlsServerName;
+    if (configMap.containsKey('tls-server-name')) {
+      tlsServerName = configMap['tls-server-name'];
+    }
+
+    return KuksaConfig(
+        hostname: hostname,
+        port: port,
+        authorizationFile: tokenFile,
+        authorization: token,
+        useTls: useTls,
+        caCertificateFile: caCertFile,
+        readCaCertificateFile: readCaCertFile,
+        caCertificate: caCert,
+        tlsServerName: tlsServerName);
+  } on Exception catch (_) {
+    return defaultConfig;
   }
 }
 
@@ -43,7 +139,7 @@ class RadioConfig {
   static String defaultHostname = 'localhost';
   static int defaultPort = 50053;
   static String defaultPresets =
-      '/etc/xdg/AGL/ics-homescreen/radio-presets.yaml';
+      '/etc/xdg/AGL/flutter-ics-homescreen/radio-presets.toml';
 
   RadioConfig(
       {required this.hostname, required this.port, required this.presets});
@@ -63,8 +159,7 @@ class StorageConfig {
   static String defaultHostname = 'localhost';
   static int defaultPort = 50054;
 
-  StorageConfig(
-      {required this.hostname, required this.port});
+  StorageConfig({required this.hostname, required this.port});
 
   static StorageConfig defaultConfig() {
     return StorageConfig(
@@ -95,11 +190,12 @@ class VoiceAgentConfig {
   static String defaultHostname = 'localhost';
   static int defaultPort = 51053;
 
-  VoiceAgentConfig({required this.hostname,required this.port});
+  VoiceAgentConfig({required this.hostname, required this.port});
 
   static VoiceAgentConfig defaultConfig() {
     return VoiceAgentConfig(
-        hostname: VoiceAgentConfig.defaultHostname, port: VoiceAgentConfig.defaultPort);
+        hostname: VoiceAgentConfig.defaultHostname,
+        port: VoiceAgentConfig.defaultPort);
   }
 }
 
@@ -114,7 +210,7 @@ class AppConfig {
   final VoiceAgentConfig voiceAgentConfig;
   final bool enableVoiceAssistant;
 
-  static String configFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
+  static String configFilePath = '/etc/xdg/AGL/flutter-ics-homescreen.toml';
 
   AppConfig(
       {required this.disableBkgAnimation,
@@ -127,76 +223,35 @@ class AppConfig {
       required this.voiceAgentConfig,
       required this.enableVoiceAssistant});
 
-  static KuksaConfig parseKuksaConfig(YamlMap kuksaMap) {
+  static KuksaConfig parseKuksaConfig() {
+    final KuksaConfig defaultConfig = KuksaConfig.defaultConfig();
     try {
-      String hostname = KuksaConfig.defaultHostname;
-      if (kuksaMap.containsKey('hostname')) {
-        hostname = kuksaMap['hostname'];
-      }
+      final Map<String, String> envVars = Platform.environment;
+      final configHome = envVars['XDG_CONFIG_HOME'];
 
-      int port = KuksaConfig.defaultPort;
-      if (kuksaMap.containsKey('port')) {
-        port = kuksaMap['port'];
+      // Read global configuration
+      var configFilePath = KuksaConfig.globalConfigFilePath;
+      if (configHome != null) {
+        configFilePath = configHome + "/AGL/kuksa.toml";
       }
+      var config = defaultConfig;
+      config = readKuksaConfig(configFilePath, config);
 
-      String token = "";
-      if (kuksaMap.containsKey('authorization')) {
-        String s = kuksaMap['authorization'];
-        if (s.isNotEmpty) {
-          if (s.startsWith("/")) {
-            debugPrint("Reading authorization token $s");
-            try {
-              token = File(s).readAsStringSync();
-            } catch (_) {
-              print("ERROR: Could not read authorization token file $token");
-              token = "";
-            }
-          } else {
-            token = s;
-          }
-        }
+      // Read app-specific configuration
+      configFilePath = KuksaConfig.appConfigFilePath;
+      if (configHome != null) {
+        configFilePath =
+            configHome + "/AGL/flutter-cluster-dashboard/kuksa.toml";
       }
-      //debugPrint("authorization = $token");
-
-      bool useTls = false;
-      if (kuksaMap.containsKey('use-tls')) {
-        var value = kuksaMap['use-tls'];
-        if (value is bool) useTls = value;
-      }
-      //debugPrint("Use TLS = $use_tls");
-
-      List<int> caCert = [];
-      String caPath = KuksaConfig.defaultCaCertPath;
-      if (kuksaMap.containsKey('ca-certificate')) {
-        caPath = kuksaMap['ca-certificate'];
-      }
-      try {
-        caCert = File(caPath).readAsBytesSync();
-      } catch (_) {
-        print("ERROR: Could not read CA certificate file $caPath");
-        caCert = [];
-      }
-      //debugPrint("CA cert = $ca_cert");
-
-      String tlsServerName = "";
-      if (kuksaMap.containsKey('tls-server-name')) {
-        tlsServerName = kuksaMap['tls-server-name'];
-      }
-
-      return KuksaConfig(
-          hostname: hostname,
-          port: port,
-          authorization: token,
-          useTls: useTls,
-          caCertificate: caCert,
-          tlsServerName: tlsServerName);
+      config = readKuksaConfig(configFilePath, config);
+      return config;
     } catch (_) {
       debugPrint("Invalid KUKSA.val configuration, using defaults");
-      return KuksaConfig.defaultConfig();
+      return defaultConfig;
     }
   }
 
-  static RadioConfig parseRadioConfig(YamlMap radioMap) {
+  static RadioConfig parseRadioConfig(Map radioMap) {
     try {
       String hostname = RadioConfig.defaultHostname;
       if (radioMap.containsKey('hostname')) {
@@ -210,7 +265,7 @@ class AppConfig {
 
       String presets = RadioConfig.defaultPresets;
       if (radioMap.containsKey('presets')) {
-        hostname = radioMap['presets'];
+        presets = radioMap['presets'];
       }
 
       return RadioConfig(hostname: hostname, port: port, presets: presets);
@@ -220,7 +275,7 @@ class AppConfig {
     }
   }
 
-    static StorageConfig parseStorageConfig(YamlMap storageMap) {
+  static StorageConfig parseStorageConfig(Map storageMap) {
     try {
       String hostname = StorageConfig.defaultHostname;
       if (storageMap.containsKey('hostname')) {
@@ -239,7 +294,7 @@ class AppConfig {
     }
   }
 
-  static MpdConfig parseMpdConfig(YamlMap mpdMap) {
+  static MpdConfig parseMpdConfig(Map mpdMap) {
     try {
       String hostname = MpdConfig.defaultHostname;
       if (mpdMap.containsKey('hostname')) {
@@ -258,7 +313,7 @@ class AppConfig {
     }
   }
 
-  static VoiceAgentConfig parseVoiceAgentConfig(YamlMap voiceAgentMap) {
+  static VoiceAgentConfig parseVoiceAgentConfig(Map voiceAgentMap) {
     try {
       String hostname = VoiceAgentConfig.defaultHostname;
       if (voiceAgentMap.containsKey('hostname')) {
@@ -281,78 +336,75 @@ class AppConfig {
 final appConfigProvider = Provider((ref) {
   final configFile = File(AppConfig.configFilePath);
   try {
-    print("Reading configuration ${AppConfig.configFilePath}");
-    String content = configFile.readAsStringSync();
-    final dynamic yamlMap = loadYaml(content);
+    // KUKSA configuration is in its own file(s)
+    KuksaConfig kuksaConfig = AppConfig.parseKuksaConfig();
 
-    KuksaConfig kuksaConfig;
-    if (yamlMap.containsKey('kuksa')) {
-      kuksaConfig = AppConfig.parseKuksaConfig(yamlMap['kuksa']);
-    } else {
-      kuksaConfig = KuksaConfig(
-          hostname: KuksaConfig.defaultHostname,
-          port: KuksaConfig.defaultPort,
-          authorization: "",
-          useTls: false,
-          caCertificate: [],
-          tlsServerName: "");
+    print("Reading configuration ${AppConfig.configFilePath}");
+    var configMap = {};
+    try {
+      String content = configFile.readAsStringSync();
+      configMap = TomlDocument.parse(content).toMap();
+    } catch (_) {
+      debugPrint("Could not read ${AppConfig.configFilePath}");
+      configMap = {};
     }
 
     RadioConfig radioConfig;
-    if (yamlMap.containsKey('radio')) {
-      radioConfig = AppConfig.parseRadioConfig(yamlMap['radio']);
+    if (configMap.containsKey('radio')) {
+      radioConfig = AppConfig.parseRadioConfig(configMap['radio']);
     } else {
       radioConfig = RadioConfig.defaultConfig();
     }
 
     StorageConfig storageConfig;
-    if (yamlMap.containsKey('storage')) {
-      storageConfig = AppConfig.parseStorageConfig(yamlMap['storage']);
+    if (configMap.containsKey('storage')) {
+      storageConfig = AppConfig.parseStorageConfig(configMap['storage']);
     } else {
       storageConfig = StorageConfig.defaultConfig();
     }
 
     MpdConfig mpdConfig;
-    if (yamlMap.containsKey('mpd')) {
-      mpdConfig = AppConfig.parseMpdConfig(yamlMap['mpd']);
+    if (configMap.containsKey('mpd')) {
+      mpdConfig = AppConfig.parseMpdConfig(configMap['mpd']);
     } else {
       mpdConfig = MpdConfig.defaultConfig();
     }
 
     VoiceAgentConfig voiceAgentConfig;
-    if(yamlMap.containsKey('voiceAgent')){
-      voiceAgentConfig = AppConfig.parseVoiceAgentConfig(yamlMap['voiceAgent']);
+    if (configMap.containsKey('voiceAgent')) {
+      voiceAgentConfig =
+          AppConfig.parseVoiceAgentConfig(configMap['voiceAgent']);
     } else {
       voiceAgentConfig = VoiceAgentConfig.defaultConfig();
     }
 
     bool enableVoiceAssistant = enableVoiceAssistantDefault;
-    if (yamlMap.containsKey('enable-voice-assistant')) {
-      var value = yamlMap['enable-voice-assistant'];
+    if (configMap.containsKey('enable-voice-assistant')) {
+      var value = configMap['enable-voice-assistant'];
       if (value is bool) {
         enableVoiceAssistant = value;
       }
     }
 
     bool disableBkgAnimation = disableBkgAnimationDefault;
-    if (yamlMap.containsKey('disable-bg-animation')) {
-      var value = yamlMap['disable-bg-animation'];
+    if (configMap.containsKey('disable-bg-animation')) {
+      var value = configMap['disable-bg-animation'];
       if (value is bool) {
         disableBkgAnimation = value;
       }
     }
 
     bool plainBackground = false;
-    if (yamlMap.containsKey('plain-bg')) {
-      var value = yamlMap['plain-bg'];
+    if (configMap.containsKey('plain-bg')) {
+      var value = configMap['plain-bg'];
       if (value is bool) {
         plainBackground = value;
       }
     }
 
     bool randomHybridAnimation = randomHybridAnimationDefault;
-    if (yamlMap.containsKey('random-hybrid-animation')) {
-      var value = yamlMap['random-hybrid-animation'];
+    if (configMap.containsKey('random-hybrid-animation')) {
+      var value = configMap['random-hybrid-animation'];
       if (value is bool) {
         randomHybridAnimation = value;
       }
@@ -370,14 +422,14 @@ final appConfigProvider = Provider((ref) {
         enableVoiceAssistant: enableVoiceAssistant);
   } catch (_) {
     return AppConfig(
-        disableBkgAnimation: false,
+        disableBkgAnimation: disableBkgAnimationDefault,
         plainBackground: false,
-        randomHybridAnimation: false,
+        randomHybridAnimation: randomHybridAnimationDefault,
         kuksaConfig: KuksaConfig.defaultConfig(),
         radioConfig: RadioConfig.defaultConfig(),
         storageConfig: StorageConfig.defaultConfig(),
         mpdConfig: MpdConfig.defaultConfig(),
         voiceAgentConfig: VoiceAgentConfig.defaultConfig(),
-        enableVoiceAssistant: false);
+        enableVoiceAssistant: enableVoiceAssistantDefault);
   }
 });
