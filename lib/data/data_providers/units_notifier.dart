@@ -2,7 +2,6 @@ import 'package:flutter_ics_homescreen/export.dart';
 import 'package:protos/val_api.dart';
 
 import 'package:protos/storage-api.dart' as storage_api;
-import 'initialize_settings.dart';
 
 class UnitsNotifier extends Notifier<Units> {
   @override
@@ -41,6 +40,13 @@ class UnitsNotifier extends Notifier<Units> {
           : PressureUnit.kilopascals;
 
       state = Units(distanceUnit, temperatureUnit, pressureUnit);
+
+      // Push out default user preferences to databroker.
+      // This is required because things are connecting asynchronously.
+      var val = ref.read(valClientProvider);
+      val.setDistanceUnit(distanceUnit);
+      val.setTemperatureUnit(temperatureUnit);
+      val.setPressureUnit(pressureUnit);
     } catch (e) {
       // Fallback to initial defaults if error occurs.
       debugPrint('Error loading settings for units: $e');
@@ -88,15 +94,16 @@ class UnitsNotifier extends Notifier<Units> {
     valClient.setDistanceUnit(unit);
 
     // Write to storage API (to selected user namespace).
-    var storageClient = ref.read(storageClientProvider);
-    final userClient = ref.read(usersProvider);
-    try {
-      await storageClient.write(storage_api.KeyValue(
-          key: VSSPath.vehicleHmiDistanceUnit,
-          value: unit == DistanceUnit.kilometers ? 'KILOMETERS' : 'MILES',
-          namespace: userClient.selectedUser.id));
-    } catch (e) {
-      debugPrint('Error saving distance unit: $e');
+    if (ref.read(storageClientConnectedProvider)) {
+      final userClient = ref.read(usersProvider);
+      try {
+        await ref.read(storageClientProvider).write(storage_api.KeyValue(
+            key: VSSPath.vehicleHmiDistanceUnit,
+            value: unit == DistanceUnit.kilometers ? 'KILOMETERS' : 'MILES',
+            namespace: userClient.selectedUser.id));
+      } catch (e) {
+        debugPrint('Error saving distance unit: $e');
+      }
     }
   }
 
@@ -107,15 +114,16 @@ class UnitsNotifier extends Notifier<Units> {
     valClient.setTemperatureUnit(unit);
 
     // Write to storage API (to selected user namespace).
-    var storageClient = ref.read(storageClientProvider);
-    final userClient = ref.read(usersProvider);
-    try {
-      await storageClient.write(storage_api.KeyValue(
-          key: VSSPath.vehicleHmiTemperatureUnit,
-          value: unit == TemperatureUnit.celsius ? "C" : "F",
-          namespace: userClient.selectedUser.id));
-    } catch (e) {
-      debugPrint('Error saving distance unit: $e');
+    if (ref.read(storageClientConnectedProvider)) {
+      final userClient = ref.read(usersProvider);
+      try {
+        await ref.read(storageClientProvider).write(storage_api.KeyValue(
+            key: VSSPath.vehicleHmiTemperatureUnit,
+            value: unit == TemperatureUnit.celsius ? "C" : "F",
+            namespace: userClient.selectedUser.id));
+      } catch (e) {
+        debugPrint('Error saving distance unit: $e');
+      }
     }
   }
 
@@ -126,15 +134,16 @@ class UnitsNotifier extends Notifier<Units> {
     valClient.setPressureUnit(unit);
 
     // Write to storage API (to selected user namespace).
-    var storageClient = ref.read(storageClientProvider);
-    final userClient = ref.read(usersProvider);
-    try {
-      await storageClient.write(storage_api.KeyValue(
-          key: VSSPath.vehicleHmiPressureUnit,
-          value: unit == PressureUnit.kilopascals ? "KPA" : "PSI",
-          namespace: userClient.selectedUser.id));
-    } catch (e) {
-      debugPrint('Error saving pressure unit: $e');
+    if (ref.read(storageClientConnectedProvider)) {
+      final userClient = ref.read(usersProvider);
+      try {
+        await ref.read(storageClientProvider).write(storage_api.KeyValue(
+            key: VSSPath.vehicleHmiPressureUnit,
+            value: unit == PressureUnit.kilopascals ? "KPA" : "PSI",
+            namespace: userClient.selectedUser.id));
+      } catch (e) {
+        debugPrint('Error saving pressure unit: $e');
+      }
     }
   }
 }

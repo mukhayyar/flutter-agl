@@ -67,8 +67,6 @@ class BluetoothContentState extends ConsumerState<BluetoothContent> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(usersProvider.select((user) => user.selectedUser));
-
     return Column(
       children: [
         CommonTitle(

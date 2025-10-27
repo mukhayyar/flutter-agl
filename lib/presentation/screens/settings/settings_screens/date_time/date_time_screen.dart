@@ -31,7 +31,7 @@ class DateTimePage extends ConsumerWidget {
                       image: "assets/Calendar.svg",
                       title: 'Date',
                       unitName: dateFormat.format(currentime),
-                      hasSwich: false,
+                      hasSwitch: false,
                       voidCallback: () async {
                         context
                             .flow<AppState>()
@@ -41,7 +41,7 @@ class DateTimePage extends ConsumerWidget {
                       image: "assets/Time.svg",
                       title: 'Time',
                       unitName: timeFormat.format(currentime),
-                      hasSwich: true,
+                      hasSwitch: true,
                       voidCallback: () {
                         context
                             .flow<AppState>()

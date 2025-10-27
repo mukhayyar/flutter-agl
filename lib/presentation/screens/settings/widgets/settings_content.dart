@@ -24,65 +24,66 @@ class Settings extends ConsumerWidget {
               SettingsTile(
                   icon: Icons.calendar_month_outlined,
                   title: 'Date & Time',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () async {
                     ref.read(appProvider.notifier).update(AppState.dateTime);
                   }),
               SettingsTile(
                   icon: Icons.bluetooth,
                   title: 'Bluetooth',
-                  hasSwich: true,
+                  hasSwitch: true,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.bluetooth);
                   }),
               SettingsTile(
                   icon: Icons.wifi,
                   title: 'Wifi',
-                  hasSwich: true,
+                  hasSwitch: true,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.wifi);
                   }),
               SettingsTile(
                   icon: CustomIcons.wiredicon,
                   title: 'Wired',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.wired);
                   }),
               SettingsTile(
                   icon: Icons.tune,
                   title: 'Audio Settings',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.audioSettings);
                   }),
-              if(ref.watch(appConfigProvider).enableVoiceAssistant)
+              if(ref.watch(appConfigProvider.select((config) => config.enableVoiceAssistant)))
               VoiceAssistantSettingsTile(
                   icon: Icons.keyboard_voice_outlined,
                   title: "Voice Assistant",
-                  hasSwich: true,
+                  hasSwitch: true,
                   voidCallback: (){
                     ref.read(appProvider.notifier).update(AppState.voiceAssistant);
                   }
               ),
+              if(ref.watch(storageClientConnectedProvider))
               SettingsTile(
                   icon: Icons.person_2_outlined,
                   title: 'Profiles',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.profiles);
                   }),
               SettingsTile(
                   icon: Icons.straighten,
                   title: 'Units',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.units);
                   }),
               SettingsTile(
                   icon: Icons.help_sharp,
                   title: 'Version Info',
-                  hasSwich: false,
+                  hasSwitch: false,
                   voidCallback: () {
                     ref.read(appProvider.notifier).update(AppState.versionInfo);
                   }),

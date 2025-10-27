@@ -63,8 +63,6 @@ class WifiContentState extends ConsumerState<WifiContent> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(usersProvider.select((user) => user.selectedUser));
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

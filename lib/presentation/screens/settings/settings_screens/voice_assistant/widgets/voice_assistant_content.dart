@@ -75,7 +75,7 @@ class VoiceAssistantContent extends ConsumerWidget {
               SttTile(
                   title: " Speech To Text",
                   sttName: sttModel==SttModel.whisper ? "Whisper AI" : "Vosk",
-                  hasSwich: true,
+                  hasSwitch: true,
                   voidCallback: () async {
                     context
                         .flow<AppState>()
@@ -93,7 +93,7 @@ class SttTile extends ConsumerStatefulWidget {
   final IconData? icon;
   final String title;
   final String sttName;
-  final bool hasSwich;
+  final bool hasSwitch;
   final VoidCallback voidCallback;
   final String? image;
   const SttTile({
@@ -101,7 +101,7 @@ class SttTile extends ConsumerStatefulWidget {
     this.icon,
     required this.title,
     required this.sttName,
-    required this.hasSwich,
+    required this.hasSwitch,
     required this.voidCallback,
     this.image,
   }) : super(key: key);

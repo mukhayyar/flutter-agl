@@ -32,7 +32,7 @@ class UnitsPage extends ConsumerWidget {
                       unitName: unit.distanceUnit == DistanceUnit.kilometers
                           ? 'kilometers'
                           : 'miles',
-                      hasSwich: false,
+                      hasSwitch: false,
                       voidCallback: () async {
                         context
                             .flow<AppState>()
@@ -44,7 +44,7 @@ class UnitsPage extends ConsumerWidget {
                       unitName: unit.temperatureUnit == TemperatureUnit.celsius
                           ? 'Celsius'
                           : 'Fahrenheit',
-                      hasSwich: true,
+                      hasSwitch: true,
                       voidCallback: () {
                         context
                             .flow<AppState>()
@@ -56,7 +56,7 @@ class UnitsPage extends ConsumerWidget {
                       unitName: unit.pressureUnit == PressureUnit.kilopascals
                           ? 'kilopascals'
                           : 'PSI',
-                      hasSwich: true,
+                      hasSwitch: true,
                       voidCallback: () {
                         context
                             .flow<AppState>()
@@ -76,7 +76,7 @@ class UnitsTile extends ConsumerStatefulWidget {
   final IconData? icon;
   final String title;
   final String unitName;
-  final bool hasSwich;
+  final bool hasSwitch;
   final VoidCallback voidCallback;
   final String? image;
   const UnitsTile({
@@ -84,7 +84,7 @@ class UnitsTile extends ConsumerStatefulWidget {
     this.icon,
     required this.title,
     required this.unitName,
-    required this.hasSwich,
+    required this.hasSwitch,
     required this.voidCallback,
     this.image,
   });

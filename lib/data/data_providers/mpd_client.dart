@@ -39,7 +39,7 @@ class MpdClient {
         onError: (e, st) => handleError(e, st));
   }
 
-  void run() async {
+  void connect() async {
     var idleEvents = <api.MpdSubsystem>{
       api.MpdSubsystem.database,
       api.MpdSubsystem.playlist,

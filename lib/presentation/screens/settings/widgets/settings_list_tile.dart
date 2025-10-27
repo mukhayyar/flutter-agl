@@ -3,13 +3,13 @@ import 'package:flutter_ics_homescreen/export.dart';
 class SettingsTile extends ConsumerStatefulWidget {
   final IconData icon;
   final String title;
-  final bool hasSwich;
+  final bool hasSwitch;
   final VoidCallback voidCallback;
   const SettingsTile({
     super.key,
     required this.icon,
     required this.title,
-    required this.hasSwich,
+    required this.hasSwitch,
     required this.voidCallback,
   });
 
@@ -71,7 +71,7 @@ class SettingsTileState extends ConsumerState<SettingsTile> {
                           style: const TextStyle(fontSize: 40),
                         ),
                       ),
-                      widget.hasSwich
+                      widget.hasSwitch
                           ? Container(
                               width: 126,
                               height: 80,
@@ -134,7 +134,7 @@ class SettingsTileState extends ConsumerState<SettingsTile> {
               //     style: const TextStyle(fontSize: 40),
               //   ),
               //   enabled: isSwitchOn,
-              //   trailing: widget.hasSwich
+              //   trailing: widget.hasSwitch
               //       ? Container(
               //           width: 126,
               //           height: 80,
@@ -188,47 +188,3 @@ class SettingsTileState extends ConsumerState<SettingsTile> {
     );
   }
 }
-
-// List<SettingsTile> settingsList = [
-//   SettingsTile(
-//       icon: Icons.calendar_month_outlined,
-//       title: 'Date & Time',
-//       hasSwich: false,
-//       voidCallback: () {}),
-//   SettingsTile(
-//       icon: Icons.bluetooth,
-//       title: 'Bluetooth',
-//       hasSwich: true,
-//       voidCallback: () {}),
-//   SettingsTile(
-//     icon: Icons.wifi,
-//       title: 'Wifi',
-//       hasSwich: true,
-//     voidCallback: () {},
-//   ),
-//   SettingsTile(
-//       icon: Icons.settings,
-//       title: 'Wired',
-//       hasSwich: false,
-//       voidCallback: () {}),
-//   SettingsTile(
-//       icon: Icons.tune,
-//       title: 'Audio Settings',
-//       hasSwich: false,
-//       voidCallback: () {}),
-//   SettingsTile(
-//       icon: Icons.person_2_outlined,
-//       title: 'Profiles',
-//       hasSwich: false,
-//       voidCallback: () {}),
-//   SettingsTile(
-//       icon: Icons.straighten,
-//       title: 'Units',
-//       hasSwich: false,
-//       voidCallback: () {}),
-//   SettingsTile(
-//       icon: Icons.help_sharp,
-//       title: 'Veriosn Info',
-//       hasSwich: false,
-//       voidCallback: () {}),
-// ];

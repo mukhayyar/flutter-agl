@@ -8,7 +8,6 @@ class ValClient {
   late VALClient stub;
   late String authorization;
   bool resubscribeOnSubscriptionError = false;
-  ResponseStream? responseStream;
 
   ValClient({required this.config, required this.ref}) {
     debugPrint("Connecting to KUKSA.val at ${config.hostname}:${config.port}");
@@ -30,10 +29,10 @@ class ValClient {
     stub = VALClient(channel);
 
     channel.onConnectionStateChanged.listen((ConnectionState state) {
-      debugPrint('Connection state changed: $state');
+      //debugPrint('KUKSA.val connection state changed: $state');
       switch (state) {
         case ConnectionState.ready:
-          debugPrint('Channel is connected and ready for RPCs.');
+          debugPrint('KUKSA.val channel connected');
           if (resubscribeOnSubscriptionError) {
             debugPrint('Recovering from subscription error, attempting to resubscribe');
             resubscribeOnSubscriptionError = false;
@@ -46,9 +45,12 @@ class ValClient {
     });
   }
 
-  void run() async {
-    // Push out persisted user preferences so databroker defaults
-    // will not overwrite them.
+  void connect() async {
+    // Push out default user preferences to databroker.
+    // Note that there is a race with the storage API initialization here,
+    // but we should not rely on it being present.  To avoid mismatch, it
+    // will also push out the persisted defaults once it connects, and
+    // hopefully in practice that will not be visible to users.
     var units = ref.read(unitStateProvider);
     setDistanceUnit(units.distanceUnit);
     setTemperatureUnit(units.temperatureUnit);
@@ -78,9 +80,9 @@ class ValClient {
       request.entries.add(entry);
     }
     try {
-      responseStream =
+      ResponseStream responseStream =
           stub.subscribe(request, options: CallOptions(metadata: metadata));
-      responseStream!.listen((value) async {
+      responseStream.listen((value) async {
         for (var update in value.updates) {
           if (!(update.hasEntry() && update.entry.hasPath())) continue;
           handleSignalUpdate(update.entry);

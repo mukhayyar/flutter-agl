@@ -8,9 +8,6 @@ class WifiPage extends StatelessWidget {
   static Page<void> page() => const MaterialPage<void>(child: WifiPage());
   @override
   Widget build(BuildContext context) {
-    //final currentUser =
-    //ref.watch(usersProvider.select((user) => user.selectedUser));
-
     return const Scaffold(body: WifiContent());
   }
 }

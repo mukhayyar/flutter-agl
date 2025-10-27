@@ -4,13 +4,13 @@ import 'package:protos/val_api.dart';
 class VoiceAssistantSettingsTile extends ConsumerStatefulWidget {
   final IconData icon;
   final String title;
-  final bool hasSwich;
+  final bool hasSwitch;
   final VoidCallback voidCallback;
   const VoiceAssistantSettingsTile({
     Key? key,
     required this.icon,
     required this.title,
-    required this.hasSwich,
+    required this.hasSwitch,
     required this.voidCallback,
   }) : super(key: key);
 
@@ -62,7 +62,7 @@ class VoiceAssistantSettingsTileState extends ConsumerState<VoiceAssistantSettin
                           style: const TextStyle(fontSize: 40),
                         ),
                       ),
-                      widget.hasSwich
+                      widget.hasSwitch
                           ? Container(
                         width: 126,
                         height: 80,

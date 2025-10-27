@@ -1,14 +1,16 @@
 import 'package:device_preview/device_preview.dart';
 
 import 'export.dart';
-import 'data/data_providers/initialize_settings.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize settings from storage API.
+  // Start asynchronously connecting to API provider backends
   final container = ProviderContainer();
-  await initializeSettings(container);
+  container.read(storageClientProvider).connect();
+  container.read(valClientProvider).connect();
+  container.read(radioClientProvider).connect();
+  container.read(mpdClientProvider).connect();
 
   // Pass the container to ProviderScope and then run the app.
   runApp(
@@ -24,4 +26,3 @@ void main() async {
     ),
   );
 }
-
