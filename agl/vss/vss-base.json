@@ -284,21 +284,42 @@
         "children": {
           "Lateral": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "AccelerationX"
+            },
             "description": "Vehicle acceleration in Y (lateral acceleration).",
             "type": "sensor",
-            "unit": "m/s^2"
+            "unit": "m/s^2",
+            "vss2dbc": {
+              "signal": "AccelerationX"
+            }
           },
           "Longitudinal": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "AccelerationY"
+            },
             "description": "Vehicle acceleration in X (longitudinal acceleration).",
             "type": "sensor",
-            "unit": "m/s^2"
+            "unit": "m/s^2",
+            "vss2dbc": {
+              "signal": "AccelerationY"
+            }
           },
           "Vertical": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "AccelerationZ"
+            },
             "description": "Vehicle acceleration in Z (vertical acceleration).",
             "type": "sensor",
-            "unit": "m/s^2"
+            "unit": "m/s^2",
+            "vss2dbc": {
+              "signal": "AccelerationZ"
+            }
           }
         },
         "description": "Spatial acceleration. Axis definitions according to ISO 8855.",
@@ -308,21 +329,42 @@
         "children": {
           "Pitch": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "GyroscopeX"
+            },
             "description": "Vehicle rotation rate along Y (lateral).",
             "type": "sensor",
-            "unit": "degrees/s"
+            "unit": "degrees/s",
+            "vss2dbc": {
+              "signal": "GyroscopeX"
+            }
           },
           "Roll": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "GyroscopeY"
+            },
             "description": "Vehicle rotation rate along X (longitudinal).",
             "type": "sensor",
-            "unit": "degrees/s"
+            "unit": "degrees/s",
+            "vss2dbc": {
+              "signal": "GyroscopeY"
+            }
           },
           "Yaw": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "GyroscopeZ"
+            },
             "description": "Vehicle rotation rate along Z (vertical).",
             "type": "sensor",
-            "unit": "degrees/s"
+            "unit": "degrees/s",
+            "vss2dbc": {
+              "signal": "GyroscopeZ"
+            }
           }
         },
         "description": "Spatial rotation. Axis definitions according to ISO 8855.",
@@ -479,6 +521,22 @@
                       },
                       "IsSignaling": {
                         "datatype": "boolean",
+                        "dbc2vss": {
+                          "on_change": true,
+                          "signal": "PT_LeftTurnOn",
+                          "transform": {
+                            "mapping": [
+                              {
+                                "from": 0,
+                                "to": false
+                              },
+                              {
+                                "from": 1,
+                                "to": true
+                              }
+                            ]
+                          }
+                        },
                         "description": "Indicates if light is signaling or off. True = signaling. False = Off.",
                         "type": "actuator"
                       }
@@ -495,6 +553,22 @@
                       },
                       "IsSignaling": {
                         "datatype": "boolean",
+                        "dbc2vss": {
+                          "on_change": true,
+                          "signal": "PT_RightTurnOn",
+                          "transform": {
+                            "mapping": [
+                              {
+                                "from": 0,
+                                "to": false
+                              },
+                              {
+                                "from": 1,
+                                "to": true
+                              }
+                            ]
+                          }
+                        },
                         "description": "Indicates if light is signaling or off. True = signaling. False = Off.",
                         "type": "actuator"
                       }
@@ -553,6 +627,22 @@
                   },
                   "IsSignaling": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "PT_HazardOn",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Indicates if light is signaling or off. True = signaling. False = Off.",
                     "type": "actuator"
                   }
@@ -4937,91 +5027,379 @@
                 "children": {
                   "CruiseCancel": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseCancel",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise cancel switch engaged.",
                     "type": "sensor"
                   },
                   "CruiseDistance": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseDistance",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise distance switch engaged.",
                     "type": "sensor"
                   },
                   "CruiseEnable": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseEnable",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise enable switch engaged.",
                     "type": "sensor"
                   },
                   "CruiseLimit": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseLimit",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise limit switch engaged.",
                     "type": "sensor"
                   },
                   "CruiseResume": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseResume",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise resume switch engaged.",
                     "type": "sensor"
                   },
                   "CruiseSet": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_CruiseSet",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel cruise set switch engaged.",
                     "type": "sensor"
                   },
                   "Horn": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Horn",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel horn switch engaged.",
                     "type": "sensor"
                   },
                   "Info": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Info",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel info switch engaged.",
                     "type": "sensor"
                   },
                   "LaneDepartureWarning": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_LaneDepartureWarning",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel lane departure warning switch engaged.",
                     "type": "sensor"
                   },
                   "Mode": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Mode",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel mode switch engaged.",
                     "type": "sensor"
                   },
                   "Next": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Next",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel next switch engaged.",
                     "type": "sensor"
                   },
                   "PhoneCall": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_PhoneCall",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel phone call switch engaged.",
                     "type": "sensor"
                   },
                   "PhoneHangup": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_PhoneHangup",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel phone hangup switch engaged.",
                     "type": "sensor"
                   },
                   "Previous": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Previous",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel previous switch engaged.",
                     "type": "sensor"
                   },
                   "Voice": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_Voice",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel voice switch engaged.",
                     "type": "sensor"
                   },
                   "VolumeDown": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_VolumeDown",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel volume down switch engaged.",
                     "type": "sensor"
                   },
                   "VolumeMute": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_VolumeMute",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel volume mute switch engaged.",
                     "type": "sensor"
                   },
                   "VolumeUp": {
                     "datatype": "boolean",
+                    "dbc2vss": {
+                      "on_change": true,
+                      "signal": "SW_VolumeUp",
+                      "transform": {
+                        "mapping": [
+                          {
+                            "from": 0,
+                            "to": false
+                          },
+                          {
+                            "from": 1,
+                            "to": true
+                          }
+                        ]
+                      }
+                    },
                     "description": "Steering wheel volume up switch engaged.",
                     "type": "sensor"
                   }
@@ -5580,11 +5958,24 @@
               },
               "PedalPosition": {
                 "datatype": "uint8",
+                "dbc2vss": {
+                  "interval_ms": 100,
+                  "signal": "BrakePressure",
+                  "transform": {
+                    "math": "floor(x / 19125 * 100 + 0.5)"
+                  }
+                },
                 "description": "Brake pedal position as percent. 0 = Not depressed. 100 = Fully depressed.",
                 "max": 100,
                 "min": 0,
                 "type": "sensor",
-                "unit": "percent"
+                "unit": "percent",
+                "vss2dbc": {
+                  "signal": "BrakePressure",
+                  "transform": {
+                    "math": "x * 191.25"
+                  }
+                }
               }
             },
             "description": "Brake system signals",
@@ -5610,9 +6001,16 @@
             "children": {
               "Angle": {
                 "datatype": "int16",
+                "dbc2vss": {
+                  "interval_ms": 100,
+                  "signal": "SteeringPosition"
+                },
                 "description": "Steering wheel angle. Positive = degrees to the left. Negative = degrees to the right.",
                 "type": "sensor",
-                "unit": "degrees"
+                "unit": "degrees",
+                "vss2dbc": {
+                  "signal": "SteeringPosition"
+                }
               },
               "Extension": {
                 "datatype": "uint8",
@@ -5742,19 +6140,33 @@
           },
           "Latitude": {
             "datatype": "double",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "Latitude"
+            },
             "description": "Current latitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.",
             "max": 90,
             "min": -90,
             "type": "sensor",
-            "unit": "degrees"
+            "unit": "degrees",
+            "vss2dbc": {
+              "signal": "Latitude"
+            }
           },
           "Longitude": {
             "datatype": "double",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "Longitude"
+            },
             "description": "Current longitude of vehicle in WGS 84 geodetic coordinates, as measured at the position of GNSS receiver antenna.",
             "max": 180,
             "min": -180,
             "type": "sensor",
-            "unit": "degrees"
+            "unit": "degrees",
+            "vss2dbc": {
+              "signal": "Longitude"
+            }
           },
           "Timestamp": {
             "datatype": "string",
@@ -7031,10 +7443,17 @@
           },
           "ThrottlePosition": {
             "datatype": "float",
+            "dbc2vss": {
+              "interval_ms": 100,
+              "signal": "ThrottlePosition"
+            },
             "deprecation": "v5.0 OBD-branch is deprecated.",
             "description": "PID 11 - Throttle position - 0 = closed throttle, 100 = open throttle",
             "type": "sensor",
-            "unit": "percent"
+            "unit": "percent",
+            "vss2dbc": {
+              "signal": "ThrottlePosition"
+            }
           },
           "ThrottlePositionB": {
             "datatype": "float",
@@ -9215,8 +9634,15 @@
               },
               "SelectedGear": {
                 "datatype": "int8",
+                "dbc2vss": {
+                  "interval_ms": 100,
+                  "signal": "Gear"
+                },
                 "description": "The selected gear. 0=Neutral, 1/2/..=Forward, -1/-2/..=Reverse, 126=Park, 127=Drive.",
-                "type": "sensor"
+                "type": "sensor",
+                "vss2dbc": {
+                  "signal": "Gear"
+                }
               },
               "Temperature": {
                 "datatype": "float",

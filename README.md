@@ -85,4 +85,12 @@ So you can make a custom mapping by changing the signal name in the `dbc2vss` an
 
 and change the `mapping` entry to point to your custom VSS mapping file.
 
+then run:
 
+```
+systemctl restart kuksa-can-provider
+```
+
+then test:
+
+```

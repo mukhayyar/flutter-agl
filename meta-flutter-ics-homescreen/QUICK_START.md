@@ -67,3 +67,12 @@ bitbake agl-ivi-demo-flutter
 bitbake -c cleanall flutter-ics-homescreen
 bitbake agl-ivi-demo-flutter
 ```
+
+### Step 8: Make Sure flutter-ics-homescreen is reading KUKSA Configurations
+
+
+```bash
+# The kuksa configuration file is in /etc/xdg/AGL
+journalctl -u ics-homescreen.service 
+```
+

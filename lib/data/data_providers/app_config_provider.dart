@@ -15,7 +15,7 @@ class KuksaConfig {
   final List<int> caCertificate;
   final String tlsServerName;
 
-  static String globalConfigFilePath = '/etc/xdg/AGL/kuksa.toml';
+  static String globalConfigFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
   static String appConfigFilePath =
       '/etc/xdg/AGL/flutter-ics-homescreen/kuksa.toml';
   static String defaultHostname = 'localhost';
@@ -37,7 +37,7 @@ class KuksaConfig {
     return KuksaConfig(
         hostname: KuksaConfig.defaultHostname,
         port: KuksaConfig.defaultPort,
-        authorizationFile: "",
+        authorizationFile: "/etc/xdg/AGL/ics-homescreen/ics-homescreen.token",
         authorization: "",
         useTls: false,
         caCertificateFile: KuksaConfig.defaultCaCertPath,
@@ -139,7 +139,7 @@ class RadioConfig {
   static String defaultHostname = 'localhost';
   static int defaultPort = 50053;
   static String defaultPresets =
-      '/etc/xdg/AGL/flutter-ics-homescreen/radio-presets.toml';
+      '/etc/xdg/AGL/flutter-ics-homescreen/radio-presets.yaml';
 
   RadioConfig(
       {required this.hostname, required this.port, required this.presets});
@@ -232,7 +232,7 @@ class AppConfig {
       // Read global configuration
       var configFilePath = KuksaConfig.globalConfigFilePath;
       if (configHome != null) {
-        configFilePath = configHome + "/AGL/kuksa.toml";
+        configFilePath = configHome + "/AGL/ics-homescreen.yaml";
       }
       var config = defaultConfig;
       config = readKuksaConfig(configFilePath, config);
