@@ -64,7 +64,13 @@ bitbake agl-ivi-demo-flutter
 ### Step 7: For faster rebuilds during development, use the following command:
 
 ```bash
-bitbake -c cleanall flutter-ics-homescreen
+# 1. Make changes to your Flutter app code or bbappend
+# 2. Clean and rebuild Flutter package
+bitbake -c cleansstate flutter-ics-homescreen
+bitbake flutter-ics-homescreen
+
+# 3. Check if it built successfully
+# If yes, rebuild the image
 bitbake agl-ivi-demo-flutter
 ```
 

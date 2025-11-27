@@ -1,0 +1,4 @@
+kuksa:
+  port : 55555
+  authorization : "/etc/xdg/AGL/ics-homescreen/ics-homescreen.token"
+  use-tls : true
