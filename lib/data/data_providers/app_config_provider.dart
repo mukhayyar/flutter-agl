@@ -16,8 +16,7 @@ class KuksaConfig {
   final String tlsServerName;
 
   static String globalConfigFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
-  static String appConfigFilePath =
-      '/etc/xdg/AGL/flutter-ics-homescreen/kuksa.toml';
+  static String appConfigFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
   static String defaultHostname = 'localhost';
   static int defaultPort = 55555;
   static String defaultCaCertPath = '/etc/kuksa-val/CA.pem';
@@ -210,7 +209,7 @@ class AppConfig {
   final VoiceAgentConfig voiceAgentConfig;
   final bool enableVoiceAssistant;
 
-  static String configFilePath = '/etc/xdg/AGL/flutter-ics-homescreen.toml';
+  static String configFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
 
   AppConfig(
       {required this.disableBkgAnimation,
@@ -240,8 +239,7 @@ class AppConfig {
       // Read app-specific configuration
       configFilePath = KuksaConfig.appConfigFilePath;
       if (configHome != null) {
-        configFilePath =
-            configHome + "/AGL/flutter-cluster-dashboard/kuksa.toml";
+        configFilePath = configHome + "/AGL/ics-homescreen.yaml";
       }
       config = readKuksaConfig(configFilePath, config);
       return config;
