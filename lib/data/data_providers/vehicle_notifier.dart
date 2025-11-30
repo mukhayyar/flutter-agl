@@ -64,12 +64,12 @@ class VehicleNotifier extends Notifier<Vehicle> {
       //     _checkBatteryWarning();
       //   }
       //   break;
-      case VSSPath.vehicleIsLockActiveLeft:
+      case VSSPath.vehicleIsChildLockActiveLeft:
         if (entry.value.hasBool_12()) {
           state = state.copyWith(isChildLockActiveLeft: entry.value.bool_12);
         }
         break;
-      case VSSPath.vehicleIsLockActiveRight:
+      case VSSPath.vehicleIsChildLockActiveRight:
         if (entry.value.hasBool_12()) {
           state = state.copyWith(isChildLockActiveRight: entry.value.bool_12);
         }
@@ -156,7 +156,7 @@ class VehicleNotifier extends Notifier<Vehicle> {
       switch (side) {
         case 'left':
           valClient.setBool(
-            VSSPath.vehicleIsLockActiveLeft,
+            VSSPath.vehicleIsChildLockActiveLeft,
             !state.isChildLockActiveLeft,
             false,
           );
@@ -166,7 +166,7 @@ class VehicleNotifier extends Notifier<Vehicle> {
           break;
         case 'right':
           valClient.setBool(
-            VSSPath.vehicleIsLockActiveRight,
+            VSSPath.vehicleIsChildLockActiveRight,
             !state.isChildLockActiveRight,
             false,
           );
