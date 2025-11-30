@@ -28,18 +28,13 @@ class UsersNotifier extends Notifier<Users> {
       final searchResponseUsers = await storageClient
           .search(storage_api.Key(key: UsersPath.InfotainmentUsers));
       if (searchResponseUsers.result.isEmpty) {
-        // Add default users if no users are inside the storage API.
         debugPrint("Adding default demo user profiles");
         state = state.copyWith(users: _users);
-        for (int i = 0; i < _users.length; i++) {
-          await storageClient.write(storage_api.KeyValue(
-              key: '${UsersPath.InfotainmentUsers}.${_users[i].id}.id',
-              value: _users[i].id));
-          await storageClient.write(storage_api.KeyValue(
-              key: '${UsersPath.InfotainmentUsers}.${_users[i].id}.name',
-              value: _users[i].name));
-        }
+        debugPrint("Using in-memory user storage (persistence disabled)");
+        debugPrint("Selecting default user: ${_users[0].id}");
+
         await selectUser(_users[0].id);
+        debugPrint("User selection complete");
       } else {
         List<User> users = [];
         List<String> idList = [];
