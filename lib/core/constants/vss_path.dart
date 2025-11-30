@@ -19,18 +19,18 @@ class VSSPath {
       'Vehicle.Cabin.Infotainment.Media.Audio.Bass';
   static const String vehicleMediaTreble =
       'Vehicle.Cabin.Infotainment.Media.Audio.Treble';
-  static const String vehicleIsLockActiveLeft =
-      'Vehicle.Cabin.Door.DriverSide.LockStatus';
-  static const String vehicleIsLockActiveRight =
-      'Vehicle.Cabin.Door.PassengerSide.LockStatus';
+  static const String vehicleIsChildLockActiveLeft =
+      'Vehicle.Cabin.Door.Row2.DriverSide.IsChildLockActive';
+  static const String vehicleIsChildLockActiveRight =
+      'Vehicle.Cabin.Door.Row2.PassengerSide.IsChildLockActive';
   static const String vehicleFrontLeftTire =
-      'Vehicle.Chassis.Axle.Front.Wheel.Left.Tire.Pressure';
+      'Vehicle.Chassis.Axle.Row1.Wheel.Left.Tire.Pressure';
   static const String vehicleFrontRightTire =
-      'Vehicle.Chassis.Axle.Front.Wheel.Right.Tire.Pressure';
+      'Vehicle.Chassis.Axle.Row1.Wheel.Right.Tire.Pressure';
   static const String vehicleRearLeftTire =
-      'Vehicle.Chassis.Axle.Rear.Wheel.Left.Tire.Pressure';
+      'Vehicle.Chassis.Axle.Row2.Wheel.Left.Tire.Pressure';
   static const String vehicleRearRightTire =
-      'Vehicle.Chassis.Axle.Rear.Wheel.Right.Tire.Pressure';
+      'Vehicle.Chassis.Axle.Row2.Wheel.Right.Tire.Pressure';
   static const String vehicleIsAirConditioningActive =
       'Vehicle.Cabin.HVAC.IsAirConditioningActive';
   static const String vehicleIsFrontDefrosterActive =
@@ -40,11 +40,11 @@ class VSSPath {
   static const String vehicleIsRecirculationActive =
       'Vehicle.Cabin.HVAC.IsRecirculationActive';
   static const String vehicleFanSpeed =
-      'Vehicle.Cabin.HVAC.Front.Driver.FanSpeed';
+      'Vehicle.Cabin.HVAC.Station.Row1.Driver.FanSpeed';
   static const String vehicleDriverTemperature =
-      'Vehicle.Cabin.HVAC.Front.Driver.Temperature';
+      'Vehicle.Cabin.HVAC.Station.Row1.Driver.Temperature';
   static const String vehiclePassengerTemperature =
-      'Vehicle.Cabin.HVAC.Front.Passenger.Temperature';
+      'Vehicle.Cabin.HVAC.Station.Row1.Passenger.Temperature';
   static const String vehicleHmiDistanceUnit =
       'Vehicle.Cabin.Infotainment.HMI.DistanceUnit';
   static const String vehicleHmiTemperatureUnit =
@@ -65,8 +65,8 @@ class VSSPath {
       vehicleMediaFade,
       vehicleMediaBass,
       vehicleMediaTreble,
-      vehicleIsLockActiveLeft,
-      vehicleIsLockActiveRight,
+      vehicleIsChildLockActiveLeft,
+      vehicleIsChildLockActiveRight,
       vehicleFrontLeftTire,
       vehicleFrontRightTire,
       vehicleRearLeftTire,
