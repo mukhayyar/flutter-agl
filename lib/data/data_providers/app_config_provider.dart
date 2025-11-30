@@ -15,8 +15,8 @@ class KuksaConfig {
   final List<int> caCertificate;
   final String tlsServerName;
 
-  static String globalConfigFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
-  static String appConfigFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
+  static String globalConfigFilePath = '/etc/xdg/AGL/ics-homescreen.toml';
+  static String appConfigFilePath = '/etc/xdg/AGL/ics-homescreen.toml';
   static String defaultHostname = 'localhost';
   static int defaultPort = 55555;
   static String defaultCaCertPath = '/etc/kuksa-val/CA.pem';
@@ -209,7 +209,7 @@ class AppConfig {
   final VoiceAgentConfig voiceAgentConfig;
   final bool enableVoiceAssistant;
 
-  static String configFilePath = '/etc/xdg/AGL/ics-homescreen.yaml';
+  static String configFilePath = '/etc/xdg/AGL/ics-homescreen.toml';
 
   AppConfig(
       {required this.disableBkgAnimation,
@@ -231,7 +231,7 @@ class AppConfig {
       // Read global configuration
       var configFilePath = KuksaConfig.globalConfigFilePath;
       if (configHome != null) {
-        configFilePath = configHome + "/AGL/ics-homescreen.yaml";
+        configFilePath = configHome + "/AGL/ics-homescreen.toml";
       }
       var config = defaultConfig;
       config = readKuksaConfig(configFilePath, config);
@@ -239,7 +239,7 @@ class AppConfig {
       // Read app-specific configuration
       configFilePath = KuksaConfig.appConfigFilePath;
       if (configHome != null) {
-        configFilePath = configHome + "/AGL/ics-homescreen.yaml";
+        configFilePath = configHome + "/AGL/ics-homescreen.toml";
       }
       config = readKuksaConfig(configFilePath, config);
       return config;
