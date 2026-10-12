@@ -90,6 +90,21 @@ class AppLauncher {
     await appLauncher.startApplication(StartRequest(id: id));
   }
 
+  /// Launch (or re-foreground) an application.
+  ///
+  /// [startApp] is the wrong call for an app that is already running:
+  /// applaunchd treats it as a no-op, so the app the user just tapped stays
+  /// behind whatever is on screen. Anything already in the stack is activated
+  /// through agl-shell instead, which also makes [activateApp] pass the
+  /// compositor output it needs.
+  void launchApp(String id) async {
+    if (appStack.contains(id)) {
+      await activateApp(id);
+    } else {
+      startApp(id);
+    }
+  }
+
   addAppToStack(String id) {
     if (!appStack.contains(id)) {
       appStack.add(id);

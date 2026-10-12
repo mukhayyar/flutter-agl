@@ -17,7 +17,9 @@ class _AppsState extends ConsumerState<Apps> {
         context.flow<AppState>().update((next) => AppState.clock);
       }
     } else {
-      ref.read(appLauncherProvider).startApp(id);
+      // launchApp (not startApp): re-foregrounds an already-running app via
+      // agl-shell activateApp instead of a no-op startApplication.
+      ref.read(appLauncherProvider).launchApp(id);
     }
   }
 
