@@ -17,7 +17,7 @@
 FLUTTER_ICS_HOMESCREEN_SRC ?= "git://github.com/mukhayyar/flutter-agl.git;protocol=https;branch=master"
 
 # Bump together with the application source in this repository.
-FLUTTER_ICS_HOMESCREEN_SRCREV ?= "4be99068c5f54525a1ad94fe014d9f08e7e47f6a"
+FLUTTER_ICS_HOMESCREEN_SRCREV ?= "cde51d2f720b1eea6fb3c321ba73415867424b9e"
 
 SRC_URI:remove = "git://gerrit.automotivelinux.org/gerrit/apps/flutter-ics-homescreen;protocol=https;branch=${AGL_BRANCH}"
 SRC_URI:prepend = "${FLUTTER_ICS_HOMESCREEN_SRC} "
