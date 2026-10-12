@@ -12,6 +12,11 @@ class AppLauncher {
 
   List<String> appStack = ['homescreen'];
 
+  // agl-shell output to activate surfaces on (e.g. "HDMI-A-1"). Discovered once
+  // via GetOutputs and cached. ActivateApp needs a valid output_name; without it
+  // the compositor cannot place the surface, so the activate is a silent no-op.
+  String _outputName = '';
+
   AppLauncher({required this.ref}) {
     aglShellChannel = ClientChannel('localhost',
         port: 14005,
@@ -97,9 +102,37 @@ class AppLauncher {
     }
   }
 
+  /// Resolve the compositor output used for [ActivateRequest].
+  ///
+  /// ActivateApp needs a valid `output_name`: without it the compositor cannot
+  /// place the surface and the request is a silent no-op, which is what made
+  /// "come back to the store" do nothing after another app was launched. The
+  /// output list is queried once and cached; with several outputs the first one
+  /// is used.
+  Future<String> _getOutputName() async {
+    if (_outputName.isNotEmpty) {
+      return _outputName;
+    }
+
+    try {
+      var response = await aglShell.getOutputs(OutputRequest());
+      if (response.outputs.isNotEmpty) {
+        _outputName = response.outputs.first.name;
+        debugPrint("agl-shell activation output: $_outputName");
+      } else {
+        debugPrint("agl-shell reports no output to activate on");
+      }
+    } catch (e) {
+      debugPrint("getOutputs failed: $e");
+    }
+
+    return _outputName;
+  }
+
   activateApp(String id) async {
     if (appStack.last != id) {
-      var req = ActivateRequest(appId: id);
+      var outputName = await _getOutputName();
+      var req = ActivateRequest(appId: id, outputName: outputName);
       aglShell.activateApp(req);
       addAppToStack(id);
     }
