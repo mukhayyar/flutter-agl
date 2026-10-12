@@ -1,84 +1,84 @@
-# Flutter ICS Homescreen - Quick Reference for AGL BitBake
+# Flutter ICS Homescreen — build notes for AGL trout
 
-## 📁 What Was Created
+`meta-flutter-ics-homescreen` is a small customisation layer that appends the
+AGL Flutter ICS homescreen recipe shipped by `meta-agl-demo`, so bitbake pulls
+the application source from this repository instead of AGL gerrit.
 
 ```
 meta-flutter-ics-homescreen/
 ├── conf/
 │   └── layer.conf
-└── recipes-demo/
-    └── flutter-ics-homescreen/
-        └── flutter-ics-homescreen_git.bbappend 
+├── recipes-demo/
+│   ├── flutter-ics-homescreen/
+│   │   └── flutter-ics-homescreen_git.bbappend   # points the recipe at this fork
+│   └── meta-flatpak/
+│       └── meta-flatpak.bbappend                 # optional, needs the external meta-flatpak layer
+└── QUICK_START.md
 ```
 
-## 🚀 Quick Start
+Target release: **AGL `trout`** — Yocto **5.0 scarthgap** (poky 5.0.15),
+`meta-flutter` for the Flutter embedder (`flutter-auto`, `flutter-app` class).
 
-### Step 1: Setup AGL Environment
+## 1. Get the AGL sources
 
 ```bash
-# If you don't have AGL yet:
-mkdir -p ~/agl && cd ~/agl
+mkdir -p ~/AGL && cd ~/AGL
 repo init -b trout -u https://gerrit.automotivelinux.org/gerrit/AGL/AGL-repo
-repo sync
-source meta-agl/scripts/aglsetup.sh -m qemux86-64 -b build agl-demo agl-devel
+repo sync -j8
+source meta-agl/scripts/aglsetup.sh -m raspberrypi4 -b build-rpi4 agl-demo agl-devel
 ```
 
-### Step 2: Check bitbake-layers
+Cluster in this repository, then add the layer:
 
 ```bash
-cd ~/agl/build
-bitbake-layers show-layers
+cd ~/AGL
+git clone https://github.com/mukhayyar/flutter-agl.git
+cd build-rpi4
+bitbake-layers add-layer ../../flutter-agl/meta-flutter-ics-homescreen
+bitbake-layers show-layers      # meta-flutter-ics-homescreen must be listed
 ```
 
-### Step 3: Bitbake agl-ivi-demo-flutter Setup
+## 2. Build
 
 ```bash
-cd ~/agl/build
-bitbake agl-ivi-demo-flutter
+bitbake agl-ivi-demo-flutter      # full IVI image
+bitbake flutter-ics-homescreen    # just the homescreen package
 ```
 
-### Step 4: Check agl-ivi-demo-flutter Image for Flutter ICS Homescreen
-```bash
-cat ~/agl/meta-agl-demo/recipes-demo/flutter-ics-homescreen/flutter-ics-homescreen_git.bb
-```
-
-
-### Step 5: Add Your Own Modifications
-```bash
-cd ~/agl/build
-
-# Add your layer back if removed
-bitbake-layers add-layer ../meta-flutter-ics-homescreen/
-
-# Check layer priorities - your layer should be listed
-bitbake-layers show-layers
-```
-
-### Step 6: Rebuild agl-ivi-demo-flutter Image with Your Own Modifications
+Rebuild the app alone while iterating:
 
 ```bash
-cd ~/agl/build
-bitbake agl-ivi-demo-flutter
-```
-
-### Step 7: For faster rebuilds during development, use the following command:
-
-```bash
-# 1. Make changes to your Flutter app code or bbappend
-# 2. Clean and rebuild Flutter package
 bitbake -c cleansstate flutter-ics-homescreen
 bitbake flutter-ics-homescreen
-
-# 3. Check if it built successfully
-# If yes, rebuild the image
 bitbake agl-ivi-demo-flutter
 ```
 
-### Step 8: Make Sure flutter-ics-homescreen is reading KUKSA Configurations
+## 3. Source selection
 
+The bbappend sets two variables (override either in `local.conf`):
+
+| Variable | Default |
+|---|---|
+| `FLUTTER_ICS_HOMESCREEN_SRC` | `git://github.com/mukhayyar/flutter-agl.git;protocol=https;branch=master` |
+| `FLUTTER_ICS_HOMESCREEN_SRCREV` | pinned commit |
+
+Bump `FLUTTER_ICS_HOMESCREEN_SRCREV` whenever the application source in this
+repository changes, otherwise bitbake keeps building the old revision.
+
+For local development, the bbappend carries a commented `externalsrc` block that
+builds straight from a working tree instead. Never ship an image built that way —
+it has no traceable `SRCREV`.
+
+## 4. Runtime configuration (do not duplicate)
+
+The AGL recipe already installs the trout configuration files —
+`ics-homescreen.toml`, `ics-homescreen.yaml`, `radio-presets.yaml`,
+`kvm.conf`, the VIS token and the systemd unit — and sets
+`PUBSPEC_IGNORE_LOCKFILE = "1"` so `meta-flutter` regenerates `pubspec.lock`
+for the Yocto Flutter SDK. Do not override these from this layer.
+
+KUKSA configuration lives in `/etc/xdg/AGL/ics-homescreen.yaml` on the target:
 
 ```bash
-# The kuksa configuration file is in /etc/xdg/AGL
-journalctl -u ics-homescreen.service 
+journalctl -u flutter-ics-homescreen.service
 ```
-
