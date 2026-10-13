@@ -51,34 +51,43 @@ class WifiContentState extends ConsumerState<WifiContent> {
 
   // ── connman helpers ──────────────────────────────────────────────────────
 
-  /// Run `connmanctl <args>` and return stdout+stderr.
-  Future<String> _connmanctl(String args) async {
-    try {
-      final res = await Process.run('connmanctl', args.split(' '));
-      return '${res.stdout}\n${res.stderr}'.trim();
-    } catch (e) {
-      debugPrint('connmanctl $args failed: $e');
-      return '';
-    }
-  }
+  /// Setuid helper shipped in the image (wifi-connect-helper recipe). The UI
+  /// runs as agl-driver while ConnMan's D-Bus policy is root-only, so on a real
+  /// target every connmanctl call has to go through it. Falls back to calling
+  /// connmanctl directly when the helper is absent (dev machine / root shell).
+  static const _privilegedHelper = '/usr/bin/wifi-connect-helper';
+  bool? _useHelper;
 
-  /// Run `connmanctl <args>` with [input] fed to its stdin.
-  ///
-  /// `connmanctl connect` registers its own agent and asks for the passphrase on
-  /// stdin; feeding it that way keeps the secret out of the shell command line.
-  Future<String> _connmanctlWithInput(String args, String input) async {
+  Future<String> _runProcess(String cmd, List<String> args, {String? input}) async {
     try {
-      final proc = await Process.start('connmanctl', args.split(' '));
-      proc.stdin.writeln(input);
-      await proc.stdin.flush();
+      final proc = await Process.start(cmd, args);
+      if (input != null) {
+        proc.stdin.writeln(input);
+        await proc.stdin.flush();
+      }
       await proc.stdin.close();
       final out = await proc.stdout.transform(utf8.decoder).join();
       final err = await proc.stderr.transform(utf8.decoder).join();
       return '$out\n$err'.trim();
     } catch (e) {
-      debugPrint('connmanctl $args (stdin) failed: $e');
+      debugPrint('$cmd ${args.join(' ')} failed: $e');
       return '';
     }
+  }
+
+  /// Run a connman operation, through the helper when it is installed.
+  Future<String> _connman(List<String> args, {String? input}) async {
+    _useHelper ??= await File(_privilegedHelper).exists();
+
+    if (_useHelper == true) {
+      // `connmanctl services <svc>` becomes `wifi-connect-helper status <svc>`.
+      final mapped = (args.isNotEmpty && args.first == 'services' && args.length > 1)
+          ? <String>['status', args[1]]
+          : args;
+      return _runProcess(_privilegedHelper, mapped, input: input);
+    }
+
+    return _runProcess('connmanctl', args, input: input);
   }
 
   /// Parse the output of `connmanctl services`.
@@ -149,7 +158,7 @@ class WifiContentState extends ConsumerState<WifiContent> {
 
   /// Rescan and refresh the list, the connected marker and the banner.
   Future<void> _updateConnectivity() async {
-    final output = await _connmanctl('services');
+    final output = await _connman(['services']);
     if (output.isEmpty) {
       if (mounted) {
         setState(() {
@@ -195,7 +204,7 @@ class WifiContentState extends ConsumerState<WifiContent> {
     var state = '';
 
     while (DateTime.now().isBefore(deadline)) {
-      final output = await _connmanctl('services $service');
+      final output = await _connman(['services', service]);
       state = RegExp(r'State\s*=\s*(\w+)')
               .firstMatch(output)
               ?.group(1)
@@ -300,7 +309,7 @@ class WifiContentState extends ConsumerState<WifiContent> {
         _banner = 'Disconnecting from ${wifi.name}…';
         _bannerIsError = false;
       });
-      await _connmanctl('disconnect ${wifi.service}');
+      await _connman(['disconnect', wifi.service]);
       setState(() => _connecting = false);
       await _updateConnectivity();
       return;
@@ -322,8 +331,8 @@ class WifiContentState extends ConsumerState<WifiContent> {
     });
 
     final output = passphrase.isEmpty
-        ? await _connmanctl('connect ${wifi.service}')
-        : await _connmanctlWithInput('connect ${wifi.service}', passphrase);
+        ? await _connman(['connect', wifi.service])
+        : await _connman(['connect', wifi.service], input: passphrase);
 
     final state = await _waitForServiceState(wifi.service);
     await _applyConnectResult(wifi, state, output);
